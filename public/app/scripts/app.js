@@ -20,7 +20,7 @@ angular
     'ngMaterial',
     'ngStorage',
     'ngStore',
-    'as.sortable',
+    'dndLists',
     'ui.router',
     'ui.utils',
     'ui.bootstrap',

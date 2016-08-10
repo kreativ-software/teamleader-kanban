@@ -21,49 +21,79 @@
               </ul>
             </div>
             <div class="card-body">
-              <div class="row" ng-controller="ChartCtrl">
-                <div class="col-sm-6">
-                  <div class="text-center">
-                    Server Status
-                  </div>
-                  <div class="p-md">
-                    <div ui-jp="plot" ui-options="
-                      [
-                        { data: {{plot_line}} },
-                        { data: {{plot_line_2}} }
-                      ], 
-                      {
-                        bars: { show: true, fill: true,  barWidth: 0.4, lineWidth: 1, order: 1, fillColor: { colors: [{ opacity: 0.5 }, { opacity: 0.9}] } },
-                        colors: ['{{app.color.primary}}','{{app.color.success}}'],
-                        series: { shadowSize: 3 },
-                        xaxis: { show: true, font: { color: '#ccc' }, position: 'bottom' },
-                        yaxis:{ show: true, font: { color: '#ccc' }},
-                        grid: { hoverable: true, clickable: true, borderWidth: 0, color: '#ccc' },
-                        tooltip: true,
-                        tooltipOpts: { content: '%x.0 is %y.4',  defaultTheme: false, shifts: { x: 0, y: -40 } }
-                      }
-                    " style="height:160px" >
+                <div class="row" ng-controller="KanbanCtrl">
+
+                    <div class="col-xs-3" ng-repeat="(listName, list) in lists">
+                        <div class="card indigo"
+                             dnd-list="list.items"
+                             dnd-inserted="insertedCallback(item, list.key, event)"
+                             dnd-horizontal-list="true"
+                             dnd-external-sources="true"
+                        >
+                            <div class="card-heading">
+                                <h2>{{ listName }}</h2>
+                                <small>subtitle</small>
+                            </div>
+                            <div class="list-group list-group-lg no-bg">
+                                <a href=""
+                                   class="list-group-item"
+                                   ng-repeat="item in list.items"
+                                   dnd-draggable="item"
+                                   dnd-moved="list.items.splice($index, 1)"
+                                   dnd-effect-allowed="move"
+                                   dnd-selected="selected = item"
+                                   ng-class="{'selected': selected == item, 'text-ellipsis': selected != item}"
+                                   ng-bind="item.description"
+                                   dnd-dragend="logEvent('Drag operation ended', event)"
+                                ></a>
+                            </div>
+                        </div>
                     </div>
-                  </div>
+
                 </div>
-                <div class="col-sm-6">
-                  <div class="text-center">
-                    Client Overview
-                  </div>
-                  <div class="p-md">
-                    <div ui-jp="plot" ui-options="
-                      {{plot_pie}},
-                      {
-                        series: { pie: { show: true, innerRadius: 0.55, stroke: { width: 3 }, label: { show: true, threshold: 0.05 } } },
-                        colors: ['{{app.color.primary}}','{{app.color.success}}'],
-                        grid: { hoverable: true, clickable: true, borderWidth: 0, color: '#ccc' },   
-                        tooltip: true,
-                        tooltipOpts: { content: '%s: %p.0%' }
-                      }
-                    " style="height:160px"></div>
-                  </div>
-                </div>
-              </div>
+              <!--<div class="row" ng-controller="ChartCtrl">-->
+                <!--<div class="col-sm-3">-->
+                  <!--<div class="text-center">-->
+                    <!--Server Status-->
+                  <!--</div>-->
+                  <!--<div class="p-md">-->
+                    <!--<div ui-jp="plot" ui-options="-->
+                      <!--[-->
+                        <!--{ data: {{plot_line}} },-->
+                        <!--{ data: {{plot_line_2}} }-->
+                      <!--], -->
+                      <!--{-->
+                        <!--bars: { show: true, fill: true,  barWidth: 0.4, lineWidth: 1, order: 1, fillColor: { colors: [{ opacity: 0.5 }, { opacity: 0.9}] } },-->
+                        <!--colors: ['{{app.color.primary}}','{{app.color.success}}'],-->
+                        <!--series: { shadowSize: 3 },-->
+                        <!--xaxis: { show: true, font: { color: '#ccc' }, position: 'bottom' },-->
+                        <!--yaxis:{ show: true, font: { color: '#ccc' }},-->
+                        <!--grid: { hoverable: true, clickable: true, borderWidth: 0, color: '#ccc' },-->
+                        <!--tooltip: true,-->
+                        <!--tooltipOpts: { content: '%x.0 is %y.4',  defaultTheme: false, shifts: { x: 0, y: -40 } }-->
+                      <!--}-->
+                    <!--" style="height:160px" >-->
+                    <!--</div>-->
+                  <!--</div>-->
+                <!--</div>-->
+                <!--<div class="col-sm-6">-->
+                  <!--<div class="text-center">-->
+                    <!--Client Overview-->
+                  <!--</div>-->
+                  <!--<div class="p-md">-->
+                    <!--<div ui-jp="plot" ui-options="-->
+                      <!--{{plot_pie}},-->
+                      <!--{-->
+                        <!--series: { pie: { show: true, innerRadius: 0.55, stroke: { width: 3 }, label: { show: true, threshold: 0.05 } } },-->
+                        <!--colors: ['{{app.color.primary}}','{{app.color.success}}'],-->
+                        <!--grid: { hoverable: true, clickable: true, borderWidth: 0, color: '#ccc' },   -->
+                        <!--tooltip: true,-->
+                        <!--tooltipOpts: { content: '%s: %p.0%' }-->
+                      <!--}-->
+                    <!--" style="height:160px"></div>-->
+                  <!--</div>-->
+                <!--</div>-->
+              <!--</div>-->
             </div>
           </div>
         </div>
