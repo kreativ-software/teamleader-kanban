@@ -47,7 +47,7 @@ angular.module('app')
               url: '/dashboard',
               templateUrl: 'views/pages/dashboard.html',
               data : { title: 'Dashboard', folded: true },
-              resolve: load(['scripts/controllers/kanban.js','scripts/controllers/chart.js','scripts/controllers/vectormap.js'])
+              resolve: load(['scripts/controllers/kanban.js','scripts/controllers/users.js','scripts/controllers/chart.js','scripts/controllers/vectormap.js'])
             })
             .state('app.analysis', {
               url: '/analysis',

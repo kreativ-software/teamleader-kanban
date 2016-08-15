@@ -1,6 +1,9 @@
 var express = require('express');
-var router = express.Router();
+var Q = require('q');
+var _ = require('underscore');
 var TeamLeader = require('teamleader-api');
+
+var router = express.Router();
 
 var tl = new TeamLeader({
   group: process.env.API_GROUP,
@@ -18,20 +21,122 @@ router.get('/options', function(req, res, next) {
   });
 });
 
-router.get('/', function(req, res, next) {
-  tl.getTasks({
-    amount: 100,
-    pageno: 0,
-    selected_customfields: process.env.KANBAN_CF_ID
+router.get('/:id', function(req, res, next) {
+  tl.getTask({
+    task_id: req.params.id
   }).then (function (result) {
-    var tasks = result.map(function (task) {
-      task.kanban = task['cf_value_' + process.env.KANBAN_CF_ID];
-      delete task['cf_value_' + process.env.KANBAN_CF_ID];
-      return task;
-    });
-    res.send(tasks);
+    res.send(result);
   }).catch (function (err) {
     res.status(500, err);
+  });
+});
+
+router.get('/', function(req, res, next) {
+  // tl.getProjects({
+  //   amount: 100,
+  //   pageno: 0,
+  //   show_active_only: 1
+  // }).then(function (projects) {
+  //   var milestoneGetters = _.map(projects, function (project) {
+  //     return tl.getMilestonesByProject({
+  //       project_id: project.id,
+  //       include_details: 1
+  //     });
+  //   });
+  //   return Q.all(milestoneGetters);
+  // }).then(function (milestonesArray) {
+  //   var milestones = _.flatten(milestonesArray);
+  //
+  //   var now = new Date().getTime()
+  //   var taskGetters = _.compact(_.map(milestones, function (milestone) {
+  //     if (milestone.closed == 0) {
+  //       return tl.getTasksByMilestone({
+  //         milestone_id: milestone.id,
+  //         selected_customfields: process.env.KANBAN_CF_ID
+  //       });
+  //     }
+  //   }));
+  //   return Q.all(taskGetters);
+  // }).then (function (tasksArray) {
+  //   var tasks = _.flatten(tasksArray);
+  //   var taskDetailGetters = _.map(tasks, function (task) {
+  //     return tl.getTask({
+  //       task_id: task.id
+  //     });
+  //   });
+  //   return Q.all(taskDetailGetters);
+  // }).then (function (tasks) {
+  //   debugger;
+  // });
+
+  var projectsQ = tl.getProjects({
+    amount: 100,
+    pageno: 0,
+    show_active_only: 1
+  });
+  var milestonesQ = null;
+
+  projectsQ.then(function (projects) {
+    var milestoneGetters = _.map(projects, function (project) {
+      return tl.getMilestonesByProject({
+        project_id: project.id,
+        include_details: 1
+      });
+    });
+
+    milestonesQ = Q.all(milestoneGetters);
+    return milestonesQ;
+  }).then(function (milestonesArray) {
+
+    Q.all([
+      tl.getTasks({
+        amount: 100,
+        pageno: 0,
+        selected_customfields: process.env.KANBAN_CF_ID
+      }),
+      tl.getTasks({
+        amount: 100,
+        pageno: 1,
+        selected_customfields: process.env.KANBAN_CF_ID
+      }),
+      tl.getTasks({
+        amount: 100,
+        pageno: 2,
+        selected_customfields: process.env.KANBAN_CF_ID
+      })//,
+      // tl.getTasks({
+      //   amount: 100,
+      //   pageno: 3,
+      //   selected_customfields: process.env.KANBAN_CF_ID
+      // })
+    ]).then (function (tasksArray) {
+      var projects = projectsQ.inspect().value;
+      var milestonesArray = milestonesQ.inspect().value;
+      _.each(milestonesArray, function (milestones, idx) {
+        _.each(milestones, function (milestone) {
+          milestone.project = projects[idx];
+        });
+      });
+
+      var milestones = _.flatten(milestonesArray);
+      milestones = _.where(milestones, {
+        closed: 0
+      });
+
+      var tasks = _.flatten(tasksArray);
+      tasks = _.compact(_.map(tasks, function (task) {
+        task.milestone = _.findWhere(milestones, {id: task.milestone_id})
+        task.kanban = task['cf_value_' + process.env.KANBAN_CF_ID] || 'TODO';
+        delete task['cf_value_' + process.env.KANBAN_CF_ID];
+        if (task.milestone) {
+          return task;
+        }
+        return false;
+      }));
+      res.send(tasks);
+    }).catch (function (err) {
+      res.status(500, err);
+    });
   });
 });
 

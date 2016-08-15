@@ -6227,3 +6227,42 @@ a.text-dark:hover {
     width: 100%;
   }
 }
+
+.list-group {
+    border-bottom-left-radius: 0;
+    border-top-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.list-group-item {
+    cursor: pointer;
+
+    border-bottom-left-radius: 0 !important;
+    border-top-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+
+    max-height: 40px;
+    line-height: 1em;
+}
+.list-group-item.selected {
+    max-height: inherit;
+    line-height: inherit;
+}
+
+.list-group-item.bg-white {
+    background-color: #FFF !important;
+}
+
+div.list-group-item.bg-white {
+    color: #333 !important;
+}
+
+.card-body.xs {
+    padding: 10px 12px;
+}
+
+.card-body .col-sm-2:last-child .card.indigo {
+    background-color: #f44336;
+}

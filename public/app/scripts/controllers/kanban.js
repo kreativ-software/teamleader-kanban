@@ -7,6 +7,14 @@ app.controller('KanbanCtrl', ['$scope', '$http', '$sce', function($scope, $http,
     $http.post('/tasks/', item);
   };
 
+  $scope.taskClick = function (item) {
+    $http.get('/tasks/' + item.id, {})
+      .then(function (result) {
+        var task = result.data;
+        angular.extend(item, item, task);
+      });
+  };
+
   $http.get('/tasks/options', {})
     .then(function (result) {
       angular.forEach(result.data.options, function (columnName, key) {
