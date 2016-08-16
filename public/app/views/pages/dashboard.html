@@ -49,9 +49,12 @@
                                         <div>{{ item.milestone.project.title }} - {{ item.milestone.title }}</div>
                                         <div ng-bind-html="item.description | nl2br | unsafe"></div>
 
-                                        <small class="text-right">{{ item.estimated_time_required }}</small>
-
-                                        <input class="pull-right input-xsmall" type="text" juration ng-model="item.tracktime" />
+                                        <div class="row no-gutter m-t-sm">
+                                            <small class="col-sm-6">{{ (item.estimated_time_required*60) | juration }}</small>
+                                            <form ng-submit="addTimetrack(item)">
+                                                <input class="col-sm-6 text-right" type="text" juration ng-model="item.tracktime" />
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -68,7 +71,7 @@
       <ul class="list-group no-bg no-borders pull-in" ng-controller="UsersCtrl">
         <li class="list-group-item clearfix" ng-repeat="user in users">
           <div class="clear text-ellipsis">
-            <div><a href="">{{ user.name }}</a></div>
+            <div><a href="" ng-class="{'font-bold': (user.email == selected.email)}">{{ user.name }}</a></div>
             <small class="text-muted-dk">{{ user.email }}</small>
           </div>
         </li>

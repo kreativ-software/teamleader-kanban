@@ -2,6 +2,7 @@ var express = require('express');
 var Q = require('q');
 var _ = require('underscore');
 var TeamLeader = require('teamleader-api');
+var moment = require('moment');
 
 var router = express.Router();
 
@@ -19,6 +20,51 @@ router.get('/options', function(req, res, next) {
   }).catch (function (err) {
     res.status(500, err);
   });
+});
+
+router.post('/tracktime', function(req, res, next) {
+
+  var start = moment().startOf('day').format('DD/MM/YYYY');
+  var end = moment().endOf('day').format('DD/MM/YYYY');
+  var task_id = req.body.id;
+  var project_id = req.body.milestone.project.id;
+  var milestone_id = req.body.milestone.id;
+  var timeTrackInSeconds = req.body.tracktime;
+
+  tl.getTimetracking({
+    date_from: start,
+    date_to: end,
+    user_id: req.session.teamleaderUser.id
+  }).then (function (timetrackings) {
+    var startDT = moment().startOf('day').add(9, 'hours');
+    if (timetrackings && timetrackings.length > 0) {
+      startDT = moment(timetrackings[timetrackings.length-1].date*1000);
+    }
+    var endDT = startDT.clone().add(timeTrackInSeconds, 'seconds');
+
+    var timetrackingOptions = {
+      'for': 'project_milestone',
+      for_id: milestone_id,
+      description: 'Ontwikkeling',
+      start_date: startDT.unix(),
+      end_date: endDT.unix(),
+      worker_id: req.session.teamleaderUser.id,
+      task_type_id: 27864
+    };
+    tl.addTimetracking(timetrackingOptions).then (function (result) {
+      res.send({success: true, result: result});
+    }, function (err) {
+      res.send({success: false, err: err});
+    });
+  });
+
+  // tl.getTask({
+  //   task_id: req.params.id
+  // }).then (function (result) {
+  //   res.send(result);
+  // }).catch (function (err) {
+  //   res.status(500, err);
+  // });
 });
 
 router.get('/:id', function(req, res, next) {

@@ -15,6 +15,15 @@ app.controller('KanbanCtrl', ['$scope', '$http', '$sce', function($scope, $http,
       });
   };
 
+  $scope.addTimetrack = function (item) {
+    $http.post('/tasks/tracktime/', item)
+      .then(function (result) {
+        item.tracktime = 0;
+      }, function (err) {
+        alert(err);
+      });
+  };
+
   $http.get('/tasks/options', {})
     .then(function (result) {
       angular.forEach(result.data.options, function (columnName, key) {

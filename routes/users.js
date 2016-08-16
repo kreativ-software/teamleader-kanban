@@ -1,4 +1,5 @@
 var express = require('express');
+var _ = require('underscore');
 
 var TeamLeader = require('teamleader-api');
 
@@ -11,14 +12,21 @@ var tl = new TeamLeader({
 });
 
 /* GET users listing. */
+router.get('/current', function(req, res, next) {
+  res.send(req.user);
+});
+
 router.get('/', function(req, res, next) {
 
   tl.getUsers({
     show_inactive_users: 1
   }).then(function (result) {
+    var teamleaderUser = _.findWhere(result, {email: req.user.email});
+    req.session.teamleaderUser = teamleaderUser;
+    req.session.save();
     res.send(result);
   });
-  
+
   //res.send('respond with a resource');
 
 });
