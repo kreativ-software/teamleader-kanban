@@ -23,16 +23,17 @@
                 <div class="row" ng-controller="KanbanCtrl">
 
                     <div class="col-sm-2 m-r-xs" ng-repeat="(listName, list) in lists">
-                        <div class="card indigo"
+                        <div class="card"
+                             ng-class="{'red-700': (listName == 'Incident'), 'indigo': (listName != 'Incident')}"
                              dnd-list="list.items"
                              dnd-inserted="insertedCallback(item, list.key, event)"
                              dnd-horizontal-list="true"
                              dnd-external-sources="true"
                         >
-                            <div class="card-heading">
+                            <div class="card-heading" ng-click="toggleBacklogCollapse()">
                                 <h2>{{ listName }}</h2>
                             </div>
-                            <div class="card-body xs">
+                            <div class="card-body xs" ng-class="{collapse: (listName=='Backlog' && backlogCollapse)}">
                                 <div class="list-group no-bg">
                                     <div
                                        ng-click="taskClick(item);"
@@ -44,7 +45,7 @@
                                        dnd-selected="selected = item"
                                        ng-class="{'selected': (selected == item), 'text-ellipsis': (selected != item)}"
                                     >
-                                        <a class="pull-right" target="_teamleader" ng-href="https://app.teamleader.eu/task_detail.php?id={{ item.id }}"><i class="fa fa-external-link"></i></a>
+                                        <a class="pull-right external-link" target="_teamleader" ng-href="https://app.teamleader.eu/task_detail.php?id={{ item.id }}"><i class="fa fa-external-link"></i></a>
 
                                         <div>{{ item.milestone.project.title }} - {{ item.milestone.title }}</div>
                                         <div ng-bind-html="item.description | nl2br | unsafe"></div>

@@ -6243,12 +6243,24 @@ a.text-dark:hover {
     border-bottom-right-radius: 0 !important;
     border-top-right-radius: 0 !important;
 
-    max-height: 40px;
+    max-height: 60px;
     line-height: 1em;
+}
+.list-group-item input {
+    display: none;
+}
+.list-group-item .external-link {
+    display: none;
 }
 .list-group-item.selected {
     max-height: inherit;
     line-height: inherit;
+}
+.list-group-item.selected input {
+    display: inline;
+}
+.list-group-item.selected .external-link {
+    display: inline;
 }
 
 .list-group-item.bg-white {
@@ -6261,8 +6273,4 @@ div.list-group-item.bg-white {
 
 .card-body.xs {
     padding: 10px 12px;
-}
-
-.card-body .col-sm-2:last-child .card.indigo {
-    background-color: #f44336;
 }

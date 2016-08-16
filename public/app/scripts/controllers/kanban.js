@@ -1,6 +1,8 @@
-app.controller('KanbanCtrl', ['$scope', '$http', '$sce', function($scope, $http, $sce) {
+app.controller('KanbanCtrl', ['$rootScope', '$scope', '$http', '$sce', function($rootScope, $scope, $http, $sce) {
   $scope.lists = {};
   $scope.selected = null;
+
+  $scope.backlogCollapse = true;
 
   $scope.insertedCallback = function (item, listKey, event) {
     item.kanbanKey = listKey;
@@ -16,12 +18,17 @@ app.controller('KanbanCtrl', ['$scope', '$http', '$sce', function($scope, $http,
   };
 
   $scope.addTimetrack = function (item) {
+    item.teamleaderUser = $rootScope.teamleaderUser;
     $http.post('/tasks/tracktime/', item)
       .then(function (result) {
         item.tracktime = 0;
       }, function (err) {
         alert(err);
       });
+  };
+
+  $scope.toggleBacklogCollapse = function () {
+    $scope.backlogCollapse = !$scope.backlogCollapse;
   };
 
   $http.get('/tasks/options', {})

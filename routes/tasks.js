@@ -30,11 +30,12 @@ router.post('/tracktime', function(req, res, next) {
   var project_id = req.body.milestone.project.id;
   var milestone_id = req.body.milestone.id;
   var timeTrackInSeconds = req.body.tracktime;
+  var teamleaderUser = req.body.teamleaderUser;
 
   tl.getTimetracking({
     date_from: start,
     date_to: end,
-    user_id: req.session.teamleaderUser.id
+    user_id: teamleaderUser.id
   }).then (function (timetrackings) {
     var startDT = moment().startOf('day').add(9, 'hours');
     if (timetrackings && timetrackings.length > 0) {
@@ -48,7 +49,7 @@ router.post('/tracktime', function(req, res, next) {
       description: 'Ontwikkeling',
       start_date: startDT.unix(),
       end_date: endDT.unix(),
-      worker_id: req.session.teamleaderUser.id,
+      worker_id: teamleaderUser.id,
       task_type_id: 27864
     };
     tl.addTimetracking(timetrackingOptions).then (function (result) {
@@ -172,7 +173,7 @@ router.get('/', function(req, res, next) {
       var tasks = _.flatten(tasksArray);
       tasks = _.compact(_.map(tasks, function (task) {
         task.milestone = _.findWhere(milestones, {id: task.milestone_id})
-        task.kanban = task['cf_value_' + process.env.KANBAN_CF_ID] || 'TODO';
+        task.kanban = task['cf_value_' + process.env.KANBAN_CF_ID] || 'Backlog';
         delete task['cf_value_' + process.env.KANBAN_CF_ID];
         if (task.milestone) {
           return task;

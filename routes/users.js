@@ -22,8 +22,6 @@ router.get('/', function(req, res, next) {
     show_inactive_users: 1
   }).then(function (result) {
     var teamleaderUser = _.findWhere(result, {email: req.user.email});
-    req.session.teamleaderUser = teamleaderUser;
-    req.session.save();
     res.send(result);
   });
 
