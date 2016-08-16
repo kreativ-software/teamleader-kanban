@@ -27,6 +27,7 @@ router.post('/tracktime', function(req, res, next) {
   var start = moment().startOf('day').format('DD/MM/YYYY');
   var end = moment().endOf('day').format('DD/MM/YYYY');
   var task_id = req.body.id;
+  var task_description = req.body.description;
   var project_id = req.body.milestone.project.id;
   var milestone_id = req.body.milestone.id;
   var timeTrackInSeconds = req.body.tracktime;
@@ -46,7 +47,7 @@ router.post('/tracktime', function(req, res, next) {
     var timetrackingOptions = {
       'for': 'project_milestone',
       for_id: milestone_id,
-      description: 'Ontwikkeling',
+      description: task_description || 'Ontwikkeling',
       start_date: startDT.unix(),
       end_date: endDT.unix(),
       worker_id: teamleaderUser.id,
