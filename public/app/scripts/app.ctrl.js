@@ -16,7 +16,7 @@ angular.module('app')
       isSmartDevice( $window ) && angular.element($window.document.body).addClass('smart');
       // config
       $scope.app = {
-        name: 'Materil',
+        name: 'Kreativ Kanban',
         version: '1.0.3',
         // for chart colors
         color: {

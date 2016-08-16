@@ -50,7 +50,9 @@ router.post('/tracktime', function(req, res, next) {
       start_date: startDT.unix(),
       end_date: endDT.unix(),
       worker_id: teamleaderUser.id,
-      task_type_id: 27864
+      task_type_id: 27864,
+      related_object_type: 'task',
+      related_object_id: task_id
     };
     tl.addTimetracking(timetrackingOptions).then (function (result) {
       res.send({success: true, result: result});
