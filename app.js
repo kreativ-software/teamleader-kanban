@@ -37,6 +37,9 @@ passport.use(new GoogleStrategy({
     passReqToCallback   : true
   },
   function(request, accessToken, refreshToken, profile, done) {
+    if (profile.email.indexOf('@kreativsoftware.com') == -1) {
+      throw(new Error('bad user'));
+    }
     // asynchronous verification, for effect...
     process.nextTick(function () {
 
@@ -58,7 +61,6 @@ app.set('view engine', 'hbs');
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -107,6 +109,8 @@ app.get( '/auth/google/callback',
 );
 
 app.use(ensureAuthenticated);
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
